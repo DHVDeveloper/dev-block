@@ -1,12 +1,18 @@
 import NextAuth from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { compare } from "bcrypt";
 import prisma from "@/lib/prisma";
+import { ulid } from "ulid";
+import { compare } from "bcrypt";
 
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -20,9 +26,9 @@ const handler = NextAuth({
           where: { email: credentials.email },
         });
 
-        if (!user) return null;
+        if (!user || !user.password) return null;
 
-        const isValid = await compare(credentials.password, user.password);
+        const isValid = compare(credentials.password, user.password);
         if (!isValid) return null;
 
         return {
@@ -33,10 +39,67 @@ const handler = NextAuth({
       }
     }),
   ],
+  callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email! },
+          include: { accounts: true },
+        });
+  
+        if (existingUser) {
+          const hasGoogleAccount = existingUser.accounts.some(
+            (acc) => acc.provider === "google"
+          );
+          
+          if (!hasGoogleAccount) {
+            await prisma.account.create({
+              data: {
+                userId: existingUser.id,
+                type: "oauth",
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                access_token: account.access_token,
+                refresh_token: account.refresh_token,
+                expires_at: account.expires_at,
+              },
+            });
+          }
+        } else {
+          await prisma.user.create({
+            data: {
+              email: user.email!,
+              name: user.name!,
+              ulid: ulid(),
+              image: user.image,
+              accounts: {
+                create: {
+                  type: "oauth",
+                  provider: account.provider,
+                  providerAccountId: account.providerAccountId,
+                  access_token: account.access_token,
+                  refresh_token: account.refresh_token,
+                  expires_at: account.expires_at,
+                },
+              },
+            },
+          });
+        }
+      }
+      return true;
+    },
+    async redirect() {
+      return '/';
+    },
+  },
   session: {
     strategy: "jwt",
   },
-  secret: process.env.NEXTAUTH_SECRET
+  pages: {
+    signIn: "/auth/signin", 
+    error: "/auth/error",
+  },
+  secret: process.env.NEXTAUTH_SECRET,
 });
 
 export { handler as GET, handler as POST };
