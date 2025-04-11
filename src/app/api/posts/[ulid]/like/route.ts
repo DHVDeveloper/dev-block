@@ -3,15 +3,16 @@ import { prisma } from "@/lib/prisma"
 import { getAuthUser } from "@/utils/getUserFromCookie"
 import { ulid } from "ulid"
 
-export async function POST(req: NextRequest, { params }: { params: { ulid: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise <{ ulid: string }> }) {
   const user = await getAuthUser(req)
+  const { ulid:postUlid } = await params
 
   if (!user) {
     return NextResponse.json({ error: "No autenticado" }, { status: 401 })
   }
 
   const post = await prisma.post.findUnique({
-    where: { ulid: params.ulid }
+    where: { ulid: postUlid }
   })
 
   if (!post) {
