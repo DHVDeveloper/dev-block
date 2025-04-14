@@ -2,27 +2,33 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
+import { Router } from "next/router";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     const res = await signIn("credentials", {
-      redirect: true,
+      redirect: false, 
       email,
       password,
     });
-
+  
     if (res?.error) {
       setError("Invalid email or password.");
-    } 
+      return;
+    }
+  
+    router.push("/");
+    router.refresh();
   };
 
   const handleGoogleLogin = () => {
