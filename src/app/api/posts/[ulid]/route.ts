@@ -16,7 +16,7 @@ export async function GET(_: Request, { params }: { params: Promise <{ ulid: str
     }
   })
 
-  if (!post) return NextResponse.json({ error: 'Post no encontrado' }, { status: 404 })
+  if (!post) return NextResponse.json({ error: 'Post not found' }, { status: 404 })
 
   return NextResponse.json(post)
 }
