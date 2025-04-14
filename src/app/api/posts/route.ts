@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const user = await getAuthUser(req);
   if (!user) {
-    return new NextResponse(JSON.stringify({ error: "No autenticado" }), {
+    return new NextResponse(JSON.stringify({ error: "Not authenticated" }), {
       status: 401,
     });
   }
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 
   if (!title || !content) {
     return new NextResponse(
-      JSON.stringify({ error: "Título y contenido son requeridos" }),
+      JSON.stringify({ error: "Title and content are required" }),
       { status: 400 }
     );
   }
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(newPost);
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ error: "Error al crear el post" }),
+      JSON.stringify({ error: "Error creating post" }),
       { status: 500 }
     );
   }

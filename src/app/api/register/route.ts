@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   
   if (!email || !name || !password) {
     return new NextResponse(
-      JSON.stringify({ message: "Todos los campos son requeridos" }),
+      JSON.stringify({ message: "All fields are required" }),
       { status: 400 }
     );
   }
@@ -22,14 +22,14 @@ export async function POST(req: Request) {
 
   if (userExists) {
     return new NextResponse(
-      JSON.stringify({ message: "Este correo ya está registrado" }),
+      JSON.stringify({ message: "This email is already registered" }),
       { status: 409 }
     );
   }
 
   if (password.length < 6) {
     return new NextResponse(
-      JSON.stringify({ message: "La contraseña debe tener al menos 6 caracteres" }),
+      JSON.stringify({ message: "The password must be at least 6 characters long" }),
       { status: 400 }
     );
   }

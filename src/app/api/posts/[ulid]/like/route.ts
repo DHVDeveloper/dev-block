@@ -8,7 +8,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise <{ ul
   const { ulid:postUlid } = await params
 
   if (!user) {
-    return NextResponse.json({ error: "No autenticado" }, { status: 401 })
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
   }
 
   const post = await prisma.post.findUnique({
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise <{ ul
   })
 
   if (!post) {
-    return NextResponse.json({ error: "Post no encontrado" }, { status: 404 })
+    return NextResponse.json({ error: "Post not found" }, { status: 404 })
   }
 
   const existingLike = await prisma.like.findUnique({
