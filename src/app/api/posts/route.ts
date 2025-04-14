@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getAuthUser } from "@/utils/getUserFromCookie";
+import { getAuthUser } from "@/utils/getAuthUser";
 import { NextRequest, NextResponse } from "next/server";
 import { ulid } from "ulid";
 

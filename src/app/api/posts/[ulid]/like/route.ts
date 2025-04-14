@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { getAuthUser } from "@/utils/getUserFromCookie"
+import { getAuthUser } from "@/utils/getAuthUser"
 import { ulid } from "ulid"
 
 export async function POST(req: NextRequest, { params }: { params: Promise <{ ulid: string }> }) {
