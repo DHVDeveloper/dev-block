@@ -16,7 +16,7 @@ import {
 } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
 import Link from "next/link";
-import { FaLongArrowAltLeft, FaRegHeart } from "react-icons/fa";
+import { FaLongArrowAltLeft } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
 export function NewPostPage() {
@@ -38,8 +38,6 @@ export function NewPostPage() {
       setContent(value);
   };
 
-
-
   const createPost = async () => {
     const res = await fetch("/api/posts", {
       method: "POST",
@@ -53,8 +51,6 @@ export function NewPostPage() {
   return (
     <Page title="Create post">
       <div className="h-[80vh]">
-        <div>
-        </div>
         <div className="w-full flex justify-between items-center">
           <Link
             href="/blog"

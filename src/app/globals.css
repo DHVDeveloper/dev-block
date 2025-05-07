@@ -1,8 +1,11 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
 
 :root {
   --background: #f5f6f8;
   --foreground: #171717;
+  --header-height: 80px;
 }
 
 @theme inline {
